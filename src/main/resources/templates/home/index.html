@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<title>OAuth認証テスト</title>
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery.base64.js"></script>
+	<script type="text/javascript">
+	<!--
+	$(function() {
+		var DEBUG = true;
+		
+		var access_token = '';
+		var refresh_token = '';
+		var token_type = '';
+		var expire_in = 0;
+		
+		var auth = {
+			username: 'roy',
+			password: 'spring',
+			grant_type: 'password',
+			scope: 'read write',
+			client_secret: '123456',
+			client_id: 'clientapp'
+		};
+		
+		$('#no-oauth').bind('click', function() {
+        	access_token = '';
+			load();
+		});
+		
+		$('#oauth').bind('click', function() {
+        	if(access_token === '' || access_token === null) {
+        		// アクセストークンが無ければ、アクセストークンを取得してから、リソース取得
+	        	fetchToken();
+        	} else {
+        		load();
+        	}
+		});
+		
+		function fetchToken() {
+			$.ajax({
+				type: 'POST',
+				url: '/oauth/token',
+				dataType: 'json',
+				data: auth,
+				headers: {
+					"Authorization": "Basic " + $.base64.encode("clientapp:123456"),
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				success: function(data){
+					if(data == null) return;
+					log("fetch token success.");
+					access_token = data.access_token;
+					refresh_token = data.refresh_token;
+					token_type = data.token_type;
+					expire_in = data.expire_in;
+					load();
+				},
+			});
+		}
+		
+		function load() {
+        	$('#container').text("ready..");
+			var auth = token_type + ' ' + access_token;
+			log("Authorization=" + auth);
+			$.ajax({
+				type: 'GET',
+				url: '/greeting',
+				dataType: 'json',
+				headers: {
+					"Authorization": auth,
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				success: function(data){
+					$('#container').text("id=" + data.id + " content=" + data.content);
+				},
+				error: function() {
+ 			       	$('#container').text("load error.");
+				}
+			});
+		}
+		
+		function encode(str) {
+			return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+		}
+		
+		function log(msg) {
+			if(DEBUG) {
+				console.log(msg);
+			}
+		}
+
+	});
+	-->
+	</script>
+</head>
+<body>
+<h1>OAuth認証テスト</h1>
+<p>
+	<button id="no-oauth">OAuthなし</button>
+	<button id="oauth">OAuth認証で取得</button>
+</p>
+<p id="container">
+</p>
+</body>
+</html>
